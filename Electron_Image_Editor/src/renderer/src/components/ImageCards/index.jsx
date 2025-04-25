@@ -3,13 +3,12 @@ import GreenButton from '../GreenButton'
 import RedButton from '../RedButton'
 import './styles.css'
 
-const ImageCard = ({ imageSrc, title, description, onEdit, onDelete }) => {
+const ImageCard = ({ imageSrc, title, onEdit, onDelete }) => {
   return (
     <div className="image-card">
       <img src={imageSrc} alt={title} className="card-image" />
       <div className="card-content">
         <h4>{title}</h4>
-        <p>{description}</p>
         <div className="card-buttons">
           <GreenButton
             label="Edit Image"

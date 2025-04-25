@@ -26,7 +26,6 @@ const Home = () => {
           key={i}
           imageSrc={img.src}
           title={img.name}
-          description="Description"
           onEdit={() => navigate('/imageView', { state: { imgSrc: img.src } })}
           onDelete={() => handleDelete(img.fullPath)}
         />
