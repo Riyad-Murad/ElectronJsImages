@@ -21,8 +21,8 @@ const io = new Server(server, {
 
 io.on("connection", (socket) => {
   const userToken = socket.handshake.auth.token;
-  console.log("Socket.IO connected:", socket.id); // Log connection
-  console.log("Received token on connection:", userToken); // Log received token
+  console.log("Socket.IO connected:", socket.id);
+  console.log("Received token on connection:", userToken);
 
   axios
     .get(`${LARAVEL_API}/chats`, {
@@ -31,17 +31,17 @@ io.on("connection", (socket) => {
       },
     })
     .then((res) => {
-      console.log("Chat history fetched successfully:", res.data); // Log successful fetch
+      console.log("Chat history fetched successfully:", res.data);
       socket.emit("chatHistory", res.data);
     })
     .catch((err) => {
       console.error("Failed to fetch chat history:", err.message);
-      console.error("Axios error details (fetch):", err); // More specific log
+      console.error("Axios error details (fetch):", err);
     });
 
   // Handle new message
   socket.on("message", (data) => {
-    console.log("Incoming message:", data, "from socket:", socket.id); // Log incoming message
+    console.log("Incoming message:", data, "from socket:", socket.id);
 
     axios
       .post(
@@ -57,7 +57,7 @@ io.on("connection", (socket) => {
         }
       )
       .then(() => {
-        console.log("Message saved successfully, fetching updated history."); // Log successful save
+        console.log("Message saved successfully, fetching updated history.");
         return axios.get(`${LARAVEL_API}/chats`, {
           headers: {
             Authorization: `Bearer ${userToken}`,
@@ -65,12 +65,12 @@ io.on("connection", (socket) => {
         });
       })
       .then((res) => {
-        console.log("Updated chat history fetched successfully:", res.data); // Log updated history fetch
+        console.log("Updated chat history fetched successfully:", res.data);
         io.emit("chatHistory", res.data);
       })
       .catch((err) => {
         console.error("Error saving or fetching chat messages:", err.message);
-        console.error("Axios error details (save/fetch):", err); // More specific log
+        console.error("Axios error details (save/fetch):", err);
       });
   });
 
