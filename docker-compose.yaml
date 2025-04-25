@@ -1,29 +1,35 @@
 services:
   server:
     image: riyadmurad44/laravel_electron:latest
-    volumes:
-      - ./imagesElectron:/var/www/html
     environment:
-      - LARAVEL_DATABASE_HOST=database
+      - LARAVEL_DATABASE_HOST=mysql-database
       - LARAVEL_DATABASE_NAME=electronjs_db
       - LARAVEL_DATABASE_USER=root
       - LARAVEL_DATABASE_PASSWORD=1234
       - LARAVEL_DATABASE_PORT_NUMBER=3306
-    restart: always
     ports:
       - 8000:80
     depends_on:
-      - database
+      - mysql-database
+    restart: always
     command: ./dockerShell.sh
 
-  database:
+  mysql-database:
     image: mysql:8.0
+    restart: always
     environment:
-      - MYSQL_ROOT_PASSWORD=1234
-      - MYSQL_DATABASE=electronjs_db
+      MYSQL_ROOT_PASSWORD: 1234
+      MYSQL_DATABASE: electronjs_db
     volumes:
-      - db-data:/var/lib/mysql
+      - mysql-data:/var/lib/mysql
+    ports:
+      - 3306:3306
+
+  node-server:
+    image: riyadmurad44/nodejs_chat:latest
+    ports:
+      - 3001:3001
+    restart: always
 
 volumes:
-  db-data:
-
+  mysql-data:
