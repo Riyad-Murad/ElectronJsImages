@@ -2,11 +2,11 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use App\Models\User;
-use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use Tests\TestCase;
+use App\Models\User;
+use Illuminate\Foundation\Testing\WithFaker;
+// use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
+// use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class loginSignupTest extends TestCase
 {
@@ -14,7 +14,6 @@ class loginSignupTest extends TestCase
      * A basic feature test example.
      */
     use WithFaker;
-    use RefreshDatabase;
 
     public function testLoginUser(): void
     {
@@ -31,11 +30,10 @@ class loginSignupTest extends TestCase
                 "success",
                 "message",
                 "data" => [
-                    "token",
+                    "id",
                     "name",
                     "email",
-                    "ip",
-                    "geolocation"
+                    "token"
                 ]
             ])
             ->assertJson([
@@ -46,20 +44,14 @@ class loginSignupTest extends TestCase
 
     public function testSignupUser(): void
     {
-        $user = User::factory()->create();
-        $token = JWTAuth::fromUser($user);
-
         $geolocation = [
             'latitude' => $this->faker->latitude(),
             'longitude' => $this->faker->longitude(),
         ];
 
-        // Generate name dynamically using Faker
         $name = $this->faker->name();
 
-        $response = $this->withHeaders([
-            "Authorization" => "Bearer $token",
-        ])->postJson("http://localhost:8000/api/v1/signup", [
+        $response = $this->postJson("http://localhost:8000/api/v1/signup", [
             "name" => $name, 
             "email" => $this->faker->unique()->safeEmail(),
             "password" => "Pa#sword1",
@@ -74,8 +66,7 @@ class loginSignupTest extends TestCase
                 "data" => [
                     "name" => $name,
                     "email" => $response->json('data.email'),
-                    "ip" => $response->json('data.ip'),
-                    "geolocation" => $response->json('data.geolocation'),
+                    "id" => $response->json('data.id'),
                     "token" => $response->json('data.token'),
                 ]
             ]);

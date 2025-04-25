@@ -16,8 +16,10 @@ class UserCreationService
             $user->name = $request["name"];
             $user->email = $request["email"];
             $user->password = bcrypt($request["password"]);
-            $user->geolocation = isset($request["geolocation"]) ? json_encode($request["geolocation"]) : null;
-            $user->ip = $request->ip ?? $user->ip;
+            if (isset($request["geolocation"])) {
+                $user->geolocation = json_encode($request["geolocation"]);
+            }
+            $user->ip = $request["ip"];
             $user->save();
             $user->token = Auth::login($user);
 
@@ -40,8 +42,8 @@ class UserCreationService
             $authUser = Auth::user();
             $user = User::find($authUser->id);
             $user->ip = $request->ip ?? $user->ip;
-            if ($request->has('geolocation')) {
-                $user->geolocation = json_encode($request->geolocation);
+            if (isset($request["geolocation"])) {
+                $user->geolocation = json_encode($request["geolocation"]);
             }
             $user->save();
             $user->token = $token;
